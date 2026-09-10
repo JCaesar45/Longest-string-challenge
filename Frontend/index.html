@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AEGIS PRIME | Quantum Secure Node</title>
+    <style>
+      :root {
+        --bg-primary: #050505;
+        --bg-secondary: #0a0a0c;
+        --accent-gold: #d4af37;
+        --accent-gold-dim: #997a24;
+        --text-primary: #f5f5f7;
+        --text-secondary: #a1a1a6;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(212, 175, 55, 0.15);
+        --transition-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      .bg-gradient {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(
+            circle at 20% 30%,
+            rgba(212, 175, 55, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(212, 175, 55, 0.05) 0%,
+            transparent 50%
+          );
+        z-index: -1;
+      }
+
+      header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 1.5rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        background: rgba(5, 5, 5, 0.7);
+        border-bottom: 1px solid var(--glass-border);
+        z-index: 1000;
+      }
+
+      .logo {
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: var(--accent-gold);
+      }
+
+      nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        margin-left: 2rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: color 0.3s var(--transition-smooth);
+      }
+      nav a:hover {
+        color: var(--accent-gold);
+      }
+
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 5%;
+      }
+
+      .hero h1 {
+        font-size: clamp(3rem, 8vw, 7rem);
+        font-weight: 200;
+        letter-spacing: -0.02em;
+        background: linear-gradient(
+          135deg,
+          var(--text-primary) 0%,
+          var(--accent-gold) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 1.2s var(--transition-smooth) forwards;
+      }
+
+      .hero p {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin-bottom: 3rem;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 1.2s var(--transition-smooth) 0.3s forwards;
+      }
+
+      .cta-btn {
+        padding: 1rem 3rem;
+        background: transparent;
+        border: 1px solid var(--accent-gold);
+        color: var(--accent-gold);
+        font-size: 0.9rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s var(--transition-smooth);
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 1.2s var(--transition-smooth) 0.6s forwards;
+      }
+
+      .cta-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--accent-gold);
+        transition: left 0.4s var(--transition-smooth);
+        z-index: -1;
+      }
+
+      .cta-btn:hover {
+        color: var(--bg-primary);
+      }
+      .cta-btn:hover::before {
+        left: 0;
+      }
+
+      .products {
+        padding: 10rem 5%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .product-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem;
+        backdrop-filter: blur(10px);
+        transition:
+          transform 0.5s var(--transition-smooth),
+          border-color 0.5s;
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      .product-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .product-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--accent-gold);
+      }
+
+      .product-tier {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        margin-bottom: 1rem;
+      }
+
+      .product-name {
+        font-size: 2rem;
+        font-weight: 300;
+        margin-bottom: 1rem;
+      }
+      .product-price {
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+      }
+
+      .product-features {
+        list-style: none;
+        margin-bottom: 2rem;
+      }
+      .product-features li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+
+      footer {
+        padding: 5rem;
+        text-align: center;
+        border-top: 1px solid var(--glass-border);
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-gradient"></div>
+    <header>
+      <div class="logo">AEGIS</div>
+      <nav>
+        <a href="#products">Architecture</a>
+        <a href="#products">Security</a>
+        <a href="#products">Acquire</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Quantum Secured.</h1>
+        <p>
+          Hardware-level encryption engineered for the post-quantum era.
+          Uncompromising security for elite digital infrastructure.
+        </p>
+        <button
+          class="cta-btn"
+          onclick="
+            document
+              .getElementById('products')
+              .scrollIntoView({ behavior: 'smooth' })
+          "
+        >
+          Explore Node
+        </button>
+      </section>
+
+      <section class="products" id="products"></section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AEGIS PRIME SYSTEMS. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+      const productData = [
+        {
+          tier: "Tier I",
+          name: "Aegis Core",
+          price: "$4,500",
+          features: [
+            "256-bit AES Hardware Encryption",
+            "Biometric Multi-Factor Auth",
+            "Air-Gapped Transaction Signing",
+            "Titanium Chassis"
+          ]
+        },
+        {
+          tier: "Tier II",
+          name: "Aegis Prime",
+          price: "$12,000",
+          features: [
+            "Post-Quantum Lattice Cryptography",
+            "Decentralized Mesh Networking",
+            "Zero-Knowledge Proof Engine",
+            "Sapphire Glass Interface"
+          ]
+        },
+        {
+          tier: "Tier III",
+          name: "Aegis Sovereign",
+          price: "$45,000",
+          features: [
+            "Custom Silicon Secure Enclave",
+            "Satellite Uplink Capability",
+            "Autonomous Threat Neutralization",
+            "Bespoke Artisan Assembly"
+          ]
+        }
+      ];
+
+      const renderProducts = async () => {
+        const container = document.getElementById("products");
+        try {
+          const response = await fetch("/api/products");
+          const data = response.ok ? await response.json() : productData;
+          container.innerHTML = data
+            .map(
+              (p) => `
+      <div class="product-card">
+        <div class="product-tier">${p.tier}</div>
+        <h2 class="product-name">${p.name}</h2>
+        <div class="product-price">${p.price}</div>
+        <ul class="product-features">
+          ${p.features.map((f) => `<li>${f}</li>`).join("")}
+        </ul>
+        <button class="cta-btn">Provision</button>
+      </div>
+    `
+            )
+            .join("");
+        } catch (e) {
+          container.innerHTML = productData
+            .map(
+              (p) => `
+      <div class="product-card">
+        <div class="product-tier">${p.tier}</div>
+        <h2 class="product-name">${p.name}</h2>
+        <div class="product-price">${p.price}</div>
+        <ul class="product-features">
+          ${p.features.map((f) => `<li>${f}</li>`).join("")}
+        </ul>
+        <button class="cta-btn">Provision</button>
+      </div>
+    `
+            )
+            .join("");
+        }
+        observeCards();
+      };
+
+      const observeCards = () => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+        document
+          .querySelectorAll(".product-card")
+          .forEach((card) => observer.observe(card));
+      };
+
+      document.addEventListener("DOMContentLoaded", renderProducts);
+    </script>
+  </body>
+</html>
